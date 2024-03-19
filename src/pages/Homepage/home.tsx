@@ -58,6 +58,67 @@ const Homepage = () => {
       // setLoading(false);
     }
   }
+  const fetchSignup = async () => {
+    try {
+      const response = await fetch('/api/db/signup', {
+        method: 'POST', // POST 요청 설정
+        headers: {
+          'Content-Type': 'application/json', // JSON 형식의 데이터 전송 설정
+          'x-api-key': '3c55d8328925224e961b1ea623ae2b977c12cb3cbdf81cfa14578004ab3abe57',
+        },
+        body: JSON.stringify({
+          id: email,
+          password,
+          /* 여기에 POST로 전송할 데이터 입력 */
+        }), // 전송할 데이터를 JSON 문자열로 변환하여 설정
+      })
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+
+      const jsonData = await response.json()
+      console.log('result', jsonData)
+      // POST 요청에 대한 응답 데이터 처리
+    } catch (error) {
+      // 오류 처리
+      // setError(error.message);
+    } finally {
+      // 로딩 상태 변경
+      // setLoading(false);
+    }
+  }
+
+  const fetchSignIn = async () => {
+    try {
+      const response = await fetch('/api/db/signin', {
+        method: 'POST', // POST 요청 설정
+        headers: {
+          'Content-Type': 'application/json', // JSON 형식의 데이터 전송 설정
+          'x-api-key': '3c55d8328925224e961b1ea623ae2b977c12cb3cbdf81cfa14578004ab3abe57',
+        },
+        body: JSON.stringify({
+          id: email,
+          password,
+          /* 여기에 POST로 전송할 데이터 입력 */
+        }), // 전송할 데이터를 JSON 문자열로 변환하여 설정
+      })
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+
+      const jsonData = await response.json()
+      console.log('result', jsonData)
+      // POST 요청에 대한 응답 데이터 처리
+    } catch (error) {
+      // 오류 처리
+      console.error('Error fetching data:', error)
+    } finally {
+      // 로딩 상태 변경
+      // setLoading(false);
+    }
+  }
 
   return (
     <main className="h-[100dvh] bg-vrBlack w-screen flex flex-col justify-center items-center">
@@ -91,7 +152,7 @@ const Homepage = () => {
         <Button
           className="bg-vrBlue text-white"
           onClick={() => {
-            handleSubmit()
+            fetchSignIn()
           }}
         >
           Sign in
@@ -99,7 +160,7 @@ const Homepage = () => {
         <p className="mt-10 text-center text-sm text-gray-500">
           Not a member?
           <span className="mr-1"></span>
-          <a href="/signup" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+          <a href="/#" onClick={fetchSignup} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
             Sign up
           </a>
         </p>
