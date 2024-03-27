@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation'
 import { Input } from '@/components/Input/input'
 import { Logo } from '@/components/Logo/logo'
 import { Button } from '@/components/Buttons/button'
+import { fetchSignup, fetchSignIn } from '@/lib/http'
 
 const Homepage = () => {
   const router = useRouter()
-
   // initialize states
 
   const [errorMessage, setErrorMessage] = useState('')
@@ -16,6 +16,7 @@ const Homepage = () => {
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
+    token: '',
   })
 
   // destructure the values
@@ -25,6 +26,8 @@ const Homepage = () => {
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
+    console.log(e.target.name)
+    console.log(e.target.value)
     setLoginData((prev) => ({ ...prev, [name]: value }))
   }
   // handle submit here
@@ -45,79 +48,27 @@ const Homepage = () => {
     }
   }
 
-  const fetchData = async () => {
+  const handleSignUp = () => {
     try {
-      const response = await fetch('https://api.example.com/data')
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
+      if (email === 'user@test.com' && password === 'user1234') {
+        router.push('/dashboard')
+      } else {
+        throw new Error('Invalid email address or password')
       }
-      const jsonData = await response.json()
-    } catch (error) {
-      // setError(error.message);
-    } finally {
-      // setLoading(false);
-    }
-  }
-  const fetchSignup = async () => {
-    try {
-      const response = await fetch('/api/db/signup', {
-        method: 'POST', // POST 요청 설정
-        headers: {
-          'Content-Type': 'application/json', // JSON 형식의 데이터 전송 설정
-          'x-api-key': '3c55d8328925224e961b1ea623ae2b977c12cb3cbdf81cfa14578004ab3abe57',
-        },
-        body: JSON.stringify({
-          id: email,
-          password,
-          /* 여기에 POST로 전송할 데이터 입력 */
-        }), // 전송할 데이터를 JSON 문자열로 변환하여 설정
-      })
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const jsonData = await response.json()
-      console.log('result', jsonData)
-      // POST 요청에 대한 응답 데이터 처리
-    } catch (error) {
-      // 오류 처리
-      // setError(error.message);
-    } finally {
-      // 로딩 상태 변경
-      // setLoading(false);
+    } catch (error: any) {
+      setErrorMessage(error.message)
     }
   }
 
-  const fetchSignIn = async () => {
+  const handleSignIn = async () => {
     try {
-      const response = await fetch('/api/db/signin', {
-        method: 'POST', // POST 요청 설정
-        headers: {
-          'Content-Type': 'application/json', // JSON 형식의 데이터 전송 설정
-          'x-api-key': '3c55d8328925224e961b1ea623ae2b977c12cb3cbdf81cfa14578004ab3abe57',
-        },
-        body: JSON.stringify({
-          id: email,
-          password,
-          /* 여기에 POST로 전송할 데이터 입력 */
-        }), // 전송할 데이터를 JSON 문자열로 변환하여 설정
-      })
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok')
-      }
-
-      const jsonData = await response.json()
-      console.log('result', jsonData)
-      // POST 요청에 대한 응답 데이터 처리
-    } catch (error) {
-      // 오류 처리
-      console.error('Error fetching data:', error)
-    } finally {
-      // 로딩 상태 변경
-      // setLoading(false);
+      const res = await fetchSignIn({ email, password })
+      setLoginData(res)
+    } catch (error: any) {
+      setErrorMessage(error.message)
     }
+
+    console.log('loginData', loginData)
   }
 
   return (
@@ -134,7 +85,7 @@ const Homepage = () => {
           Email address
         </label>
 
-        <Input name="email" type="email" value={email} onChange={handleOnChange} />
+        <Input name="email" type="email" value={email || ''} onChange={handleOnChange} />
 
         <div className="flex items-center justify-between">
           <label htmlFor="password" className="block text-sm font-medium leading-6 text-white">
@@ -147,12 +98,12 @@ const Homepage = () => {
           </div>
         </div>
 
-        <Input name="password" type="password" value={password} onChange={handleOnChange} />
+        <Input name="password" type="password" value={password || ''} onChange={handleOnChange} />
 
         <Button
           className="bg-vrBlue text-white"
           onClick={() => {
-            fetchSignIn()
+            handleSignIn()
           }}
         >
           Sign in
